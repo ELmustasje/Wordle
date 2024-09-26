@@ -1,0 +1,76 @@
+	public String calculateMostLikleyWord(List<String> words, Map<Character,Integer>[] letterFrequencies, ArrayList<WordleWord> feedbacks){
+		String bestWord = null;
+		double bestScore = -1;
+
+		for(String word : words){
+			double score = -1;
+			if(!StringContainDuplicateLetters(word)){
+				score = claculateWordScore(word,letterFrequencies) * 10;
+			}else{
+				score = claculateWordScore(word,letterFrequencies);
+			}
+			if(score > bestScore){
+				bestScore = score;
+				bestWord = word;
+			}
+
+		}
+		return bestWord;
+	}
+	public String calculateWordWithMostEliminations(Map<Character,Integer>[] letterFrequencies, ArrayList<WordleWord> feedbacks){
+		String bestWord = null;
+		double bestScore = -1;
+
+		for(String word : getAllWords().getAnswerWordsList()){
+			double score = -1;
+			if(!StringContainDuplicateLetters(word)
+					&& !StringContainsAnyGreen(word,feedbacks)
+					&& !StringContainsYellowInSameSpot(word,feedbacks)
+			){
+				score = claculateWordScore(word,letterFrequencies) * 1000;
+			}else if(!StringContainDuplicateLetters(word) && !StringContainsAnyGreen(word,feedbacks)){
+				score = claculateWordScore(word,letterFrequencies) * 100;
+			} else if (!StringContainDuplicateLetters(word)) {
+				score = claculateWordScore(word,letterFrequencies) * 10;
+			} else{
+				score = claculateWordScore(word,letterFrequencies);
+			}
+			if(score > bestScore){
+				bestScore = score;
+				bestWord = word;
+			}
+
+		}
+		return bestWord;
+	}
+
+	//Checks if string contains any green letters
+	private Boolean StringContainsAnyGreen(String word, ArrayList<WordleWord> feedbacks){
+		if(feedbacks.isEmpty()){
+			return false;
+		}
+		for(WordleWord feedback : feedbacks){
+			int i = 0;
+			for(WordleCharacter feedbackChar : feedback){
+				if(feedbackChar.letter == word.charAt(i) && feedbackChar.answerType == AnswerType.CORRECT){
+					return true;
+				}
+				i++;
+			}
+		}
+		return false;
+	}
+	private Boolean StringContainsYellowInSameSpot(String word, ArrayList<WordleWord> feedbacks){
+		if(feedbacks.isEmpty()){
+			return false;
+		}
+		for(WordleWord feedback : feedbacks){
+			int i = 0;
+			for(WordleCharacter feedbackChar : feedback){
+				if(feedbackChar.letter == word.charAt(i) && feedbackChar.answerType == AnswerType.MISPLACED){
+					return true;
+				}
+			}
+		}
+		return false;
+	}

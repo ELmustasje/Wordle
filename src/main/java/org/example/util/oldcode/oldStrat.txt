@@ -1,0 +1,42 @@
+package no.uib.inf102.util.oldcode;
+
+import no.uib.inf102.wordle.controller.AI.IStrategy;
+import no.uib.inf102.wordle.model.Dictionary;
+import no.uib.inf102.wordle.model.word.WordleWord;
+import no.uib.inf102.wordle.model.word.WordleWordList;
+
+import java.util.ArrayList;
+import java.util.Map;
+
+public class MyStrategy2 implements IStrategy {
+
+
+    private Dictionary wordleDictionary;
+    private WordleWordList guesses;
+    private ArrayList<WordleWord> feedbacks = new ArrayList<>();
+
+    public MyStrategy2(Dictionary wordleDictionary) {
+        this.wordleDictionary = wordleDictionary;
+        reset();
+    }
+
+    @Override
+    //avg: 3.636
+    public String makeGuess(WordleWord feedback) {
+        // TODO: Implement me :)
+        //Eliminates the words that are not possible answers
+        if(feedback != null){
+            guesses.eliminateWords(feedback);
+        }
+        //Creates a hashmap containing witch letter is most frequent for each of the five places
+        Map<Character,Integer>[] mostFrequentLetters = guesses.calculateLetterFrequencies(guesses.possibleAnswers());
+        //Uses WordleWord::calculateMostLikleyWord to guess a word
+        return guesses.calculateMostLikleyWord(guesses.possibleAnswers(),mostFrequentLetters,feedbacks);
+    }
+
+    @Override
+    public void reset() {
+        feedbacks = new ArrayList<>();
+        guesses = new WordleWordList(wordleDictionary);
+    }
+}
